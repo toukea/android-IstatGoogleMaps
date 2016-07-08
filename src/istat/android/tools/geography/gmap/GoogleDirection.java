@@ -1,17 +1,28 @@
 package istat.android.tools.geography.gmap;
 
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import android.os.AsyncTask;
 import android.util.Log;
 
 /*
@@ -55,9 +66,11 @@ public class GoogleDirection {
 				+ "&sensor=false&units=metric&mode=driving";
 
 		try {
-			URL Url = new URL(url);
-			HttpURLConnection conn = (HttpURLConnection) Url.openConnection();
-			InputStream in = conn.getInputStream();
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpContext localContext = new BasicHttpContext();
+			HttpPost httpPost = new HttpPost(url);
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			InputStream in = response.getEntity().getContent();
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
 			Document doc = builder.parse(in);
@@ -106,6 +119,18 @@ public class GoogleDirection {
 	}
 
 	// --------------------------------------------------------------------------------------------------------
+	public static AsyncDirectionQuery executeAsyncQuery(LatLng start, LatLng end, String mode,
+			DirectionQueryCallBack callBack) {
+		return new GoogleDirection().executeAsyncQuery(mode, callBack, start,
+				end);
+	}
+
+	public AsyncDirectionQuery executeAsyncQuery(String mode, DirectionQueryCallBack callBack,
+			LatLng... point) {
+		AsyncDirectionQuery task = new AsyncDirectionQuery(mode, callBack);
+		task.execute(point);
+		return task;
+	}
 
 	public DirectionResponse executeQuery(LatLng start, LatLng end, String mode) {
 		String url = "http://maps.googleapis.com/maps/api/directions/xml?"
@@ -114,9 +139,11 @@ public class GoogleDirection {
 				+ "&sensor=false&units=metric&mode=" + mode;
 
 		try {
-			URL Url = new URL(url);
-			HttpURLConnection conn = (HttpURLConnection) Url.openConnection();
-			InputStream in = conn.getInputStream();
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpContext localContext = new BasicHttpContext();
+			HttpGet httpGet = new HttpGet(url);
+			HttpResponse response = httpClient.execute(httpGet, localContext);
+			InputStream in = response.getEntity().getContent();
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
 
@@ -226,6 +253,49 @@ public class GoogleDirection {
 
 			return listGeopoints;
 		}
+
+		public PolylineOptions getPolylineAsItinerary() {
+			PolylineOptions out = new PolylineOptions();
+			out.addAll(getDirection());
+			return out;
+
+		}
+
 	}
 
+	public final class AsyncDirectionQuery extends AsyncTask<LatLng, Void, Void> {
+		List<DirectionResponse> out = new ArrayList<DirectionResponse>();
+		String mode;
+		DirectionQueryCallBack callBack;
+
+		public AsyncDirectionQuery(String mode, DirectionQueryCallBack callBack) {
+			this.mode = mode;
+			this.callBack = callBack;
+		}
+
+		@Override
+		protected Void doInBackground(LatLng... params) {
+			// TODO Auto-generated method stub
+			for (LatLng latLng : params) {
+				if (!isCancelled())
+					out.add(executeQuery(params[0], latLng, mode));
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if (callBack != null && !isCancelled())
+				callBack.onDirectionQueryComplete(out);
+		}
+
+	}
+
+	public interface DirectionQueryCallBack {
+		public void onDirectionQueryComplete(
+				List<DirectionResponse> directionResponses);
+
+	}
 }
