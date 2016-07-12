@@ -1,6 +1,9 @@
 .settings
 .settings/
 .settings/*
+libs
+libs/
+libs/*
 gen
 gen/
 gent/*
