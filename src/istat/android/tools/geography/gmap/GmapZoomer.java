@@ -192,6 +192,7 @@ public class GmapZoomer {
 		};
 
 		private ZoomState() {
+			initHandler();
 		}
 
 		private ZoomState(int wait, CameraPosition cmPosition) {
