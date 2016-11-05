@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import istat.android.network.http.SimpleHttpQuery;
+
 /*
  * Copyright (C) 2014 Istat Dev.
  *
@@ -57,11 +59,8 @@ public class GoogleDirection {
                 + "&sensor=false&units=metric&mode=driving";
 
         try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpContext localContext = new BasicHttpContext();
-            HttpPost httpPost = new HttpPost(url);
-            HttpResponse response = httpClient.execute(httpPost, localContext);
-            InputStream in = response.getEntity().getContent();
+            SimpleHttpQuery http = new SimpleHttpQuery();
+            InputStream in = http.doGet(url);
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
             Document doc = builder.parse(in);
@@ -128,13 +127,10 @@ public class GoogleDirection {
                 + "origin=" + start.latitude + "," + start.longitude
                 + "&destination=" + end.latitude + "," + end.longitude
                 + "&sensor=false&units=metric&mode=" + mode;
-
         try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpContext localContext = new BasicHttpContext();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse response = httpClient.execute(httpGet, localContext);
-            InputStream in = response.getEntity().getContent();
+            SimpleHttpQuery http = new SimpleHttpQuery();
+
+            InputStream in = http.doGet(url);
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
 
@@ -207,7 +203,7 @@ public class GoogleDirection {
 
         public ArrayList<LatLng> getDirection() {
             NodeList nl1, nl2, nl3;
-            ArrayList<LatLng> listGeopoints = new ArrayList<LatLng>();
+            ArrayList<LatLng> listGeoPoints = new ArrayList<LatLng>();
             nl1 = document.getElementsByTagName("step");
             if (nl1.getLength() > 0) {
                 for (int i = 0; i < nl1.getLength(); i++) {
@@ -221,14 +217,14 @@ public class GoogleDirection {
                     double lat = Double.parseDouble(latNode.getTextContent());
                     Node lngNode = nl3.item(getNodeIndex(nl3, "lng"));
                     double lng = Double.parseDouble(lngNode.getTextContent());
-                    listGeopoints.add(new LatLng(lat, lng));
+                    listGeoPoints.add(new LatLng(lat, lng));
 
                     locationNode = nl2.item(getNodeIndex(nl2, "polyline"));
                     nl3 = locationNode.getChildNodes();
                     latNode = nl3.item(getNodeIndex(nl3, "points"));
                     ArrayList<LatLng> arr = decodePoly(latNode.getTextContent());
                     for (int j = 0; j < arr.size(); j++) {
-                        listGeopoints.add(new LatLng(arr.get(j).latitude, arr
+                        listGeoPoints.add(new LatLng(arr.get(j).latitude, arr
                                 .get(j).longitude));
                     }
 
@@ -238,11 +234,11 @@ public class GoogleDirection {
                     lat = Double.parseDouble(latNode.getTextContent());
                     lngNode = nl3.item(getNodeIndex(nl3, "lng"));
                     lng = Double.parseDouble(lngNode.getTextContent());
-                    listGeopoints.add(new LatLng(lat, lng));
+                    listGeoPoints.add(new LatLng(lat, lng));
                 }
             }
 
-            return listGeopoints;
+            return listGeoPoints;
         }
 
         public PolylineOptions getPolylineAsItinerary() {
