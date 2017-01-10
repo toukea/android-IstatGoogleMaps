@@ -69,24 +69,24 @@ public class GmapZoomer {
 		});
 	}
 
-	public ZoomState obteinewZoomState() {
+	public ZoomState newZoomState() {
 		return new ZoomState();
 	}
 
-	public ZoomState obteinewZoomState(int wait, float zoom, LatLng point) {
+	public ZoomState newZoomState(int wait, float zoom, LatLng point) {
 		return new ZoomState(wait, zoom, point);
 	}
 
-	public ZoomState obteinewZoomState(float zoom, LatLng point) {
+	public ZoomState newZoomState(float zoom, LatLng point) {
 		return new ZoomState(0, zoom, point);
 	}
 
-	public ZoomState obteinewZoomState(int wait, float zoom, float lat,
-			float lng) {
+	public ZoomState newZoomState(int wait, float zoom, float lat,
+								  float lng) {
 		return new ZoomState(wait, zoom, new LatLng(lat, lng));
 	}
 
-	public ZoomState obteinewZoomState(float zoom, float lat, float lng) {
+	public ZoomState newZoomState(float zoom, float lat, float lng) {
 		return new ZoomState(zoom, new LatLng(lat, lng));
 	}
 
