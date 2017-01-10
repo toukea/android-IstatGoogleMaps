@@ -1,5 +1,5 @@
 # Istat Gmaps
-An Android Library than allow to perform smart and pretty Zoom using Google Map.
+An Android Library allowing to perform smart and pretty Zoom using Google Map motion.
 
 # Perform multiple Zoom and motion
 
