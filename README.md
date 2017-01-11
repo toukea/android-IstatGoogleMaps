@@ -1,7 +1,7 @@
 # Istat Gmaps
 An Android Library allowing to perform smart and pretty Zoom using Google Map motion.
 
-# Perform multiple Zoom and motion
+# Perform multiple Zooms and motions
 
  ```java
     GmapZoomer zoomer = new GmapZoomer(mContext, mMap);
