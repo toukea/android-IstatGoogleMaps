@@ -41,7 +41,7 @@ public abstract class MarkerAdapter<Item> implements OnInfoWindowClickListener,
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		// TODO Auto-generated method stub
+		
 		int id = markers.indexOf(marker);
 		if (mOnItemMarkerSelected != null) {
 			if (!mOnItemMarkerSelected.onDisplayItemMarkerInfoWindow(
@@ -53,7 +53,7 @@ public abstract class MarkerAdapter<Item> implements OnInfoWindowClickListener,
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		// TODO Auto-generated method stub
+		
 		int index = markers.indexOf(marker);
 		selectedItem = items.get(index);
 		if (mOnItemMarkerSelected != null)

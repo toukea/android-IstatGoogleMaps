@@ -56,7 +56,7 @@ public class GoogleDirection {
         String url = "http://maps.googleapis.com/maps/api/directions/xml?"
                 + "origin=" + start.latitude + "," + start.longitude
                 + "&destination=" + end.latitude + "," + end.longitude
-                + "&sensor=false&units=metric&mode=driving";
+                + "&sensor=false&units=metric&mode="+mode;
 
         try {
             SimpleHttpQuery http = new SimpleHttpQuery();
@@ -262,7 +262,7 @@ public class GoogleDirection {
 
         @Override
         protected Void doInBackground(LatLng... params) {
-            // TODO Auto-generated method stub
+
             for (LatLng latLng : params) {
                 if (!isCancelled())
                     out.add(executeQuery(params[0], latLng, mode));
@@ -272,7 +272,7 @@ public class GoogleDirection {
 
         @Override
         protected void onPostExecute(Void result) {
-            // TODO Auto-generated method stub
+
             super.onPostExecute(result);
             if (callBack != null && !isCancelled())
                 callBack.onDirectionQueryComplete(out);

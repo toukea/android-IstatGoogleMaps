@@ -61,7 +61,7 @@ public class GmapZoomer {
 
             @Override
             public void onMapClick(LatLng point) {
-                // TODO Auto-generated method stub
+
                 if (stopMotionOnClick)
                     stopZoomTask();
             }
@@ -123,7 +123,7 @@ public class GmapZoomer {
                     try {
                         state.executeZoom().join();
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
+
                         e.printStackTrace();
                     }
                 }
@@ -171,20 +171,20 @@ public class GmapZoomer {
         private int zoomTime = -1;
         private float bearing = 0;
         private float titl = 0;
-        private boolean zoomStateTaskinRun = false;
+        private boolean zoomStateTaskRunning = false;
         private Handler handler;
         private CancelableCallback callback = new CancelableCallback() {
 
             @Override
             public void onCancel() {
-                // TODO Auto-generated method stub
+
                 if (isStopMotionOnScroll())
                     stopZoomTask();
             }
 
             @Override
             public void onFinish() {
-                // TODO Auto-generated method stub
+
 
             }
 
@@ -238,7 +238,7 @@ public class GmapZoomer {
                                         zoomTime, callback);
 
                         }
-                        zoomStateTaskinRun = false;
+                        zoomStateTaskRunning = false;
                         Bundle bundle = new Bundle();
                         bundle.putDouble(EXTRA_WAIT, wait);
                         bundle.putDouble(EXTRA_ZOOM, zoom);
@@ -263,7 +263,7 @@ public class GmapZoomer {
         }
 
         private Thread executeZoom() {
-            zoomStateTaskinRun = true;
+            zoomStateTaskRunning = true;
             Thread thread = new Thread() {
                 public void run() {
                     try {
@@ -275,7 +275,7 @@ public class GmapZoomer {
                     }
                     Message msg = handler.obtainMessage();
 
-                    if (inRun && zoomStateTaskinRun)
+                    if (inRun && zoomStateTaskRunning)
                         handler.sendMessage(msg);
                 }
 
@@ -285,7 +285,7 @@ public class GmapZoomer {
         }
 
         public void stopZoomStateTask() {
-            zoomStateTaskinRun = false;
+            zoomStateTaskRunning = false;
         }
 
         public ZoomState setZoomWait(int wait) {
@@ -372,7 +372,7 @@ public class GmapZoomer {
 
                 @Override
                 public void onFinish() {
-                    // TODO Auto-generated method stub
+
                     // if(callback!=null)callback.onFinish();
                     executeZoomMotion(state);
                     // Toast.makeText(context, "calback:"+zoom,
@@ -381,7 +381,7 @@ public class GmapZoomer {
 
                 @Override
                 public void onCancel() {
-                    // TODO Auto-generated method stub
+
                     if (state.callback != null)
                         state.callback.onCancel();
                 }
@@ -404,7 +404,7 @@ public class GmapZoomer {
         }
 
         public boolean isRunning() {
-            return zoomStateTaskinRun;
+            return zoomStateTaskRunning;
         }
 
     }
